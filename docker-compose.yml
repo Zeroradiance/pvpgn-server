@@ -2,9 +2,14 @@ version: "3"
 
 services:
   bnetd:
-    depends_on: 
+    depends_on:
       - mysql
-    image: pvpgn-server:bnetd-mysql
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        with_bnetd: true
+        with_mysql: true
     restart: unless-stopped
     ports:
       - 6112:6112/udp
@@ -12,31 +17,43 @@ services:
     volumes:
       - /opt/pvpgn/etc:/usr/local/etc/pvpgn
       - /opt/pvpgn/var:/usr/local/var/pvpgn
-  
+
   d2cs:
-    depends_on: 
+    depends_on:
       - mysql
-    image: pvpgn-server:d2cs-mysql
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        with_d2cs: true
+        with_bnetd: false
+        with_mysql: true
     restart: unless-stopped
     ports:
       - 6113:6113/udp
       - 6113:6113
-    environment: 
-      SERVER_TYPE: d2cs 
+    environment:
+      SERVER_TYPE: d2cs
     volumes:
       - /opt/pvpgn/etc:/usr/local/etc/pvpgn
       - /opt/pvpgn/var:/usr/local/var/pvpgn
 
   d2dbs:
-    depends_on: 
+    depends_on:
       - mysql
-    image: pvpgn-server:d2dbs-mysql
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        with_d2dbs: true
+        with_bnetd: false
+        with_mysql: true
     restart: unless-stopped
     ports:
       - 6114:6114/udp
       - 6114:6114
     environment:
-      SERVER_TYPE: d2dbs 
+      SERVER_TYPE: d2dbs
     volumes:
       - /opt/pvpgn/etc:/usr/local/etc/pvpgn
       - /opt/pvpgn/var:/usr/local/var/pvpgn
